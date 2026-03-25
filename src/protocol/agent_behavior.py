@@ -24,7 +24,7 @@ class LLMGateway(Protocol):
     bukan pada implementasi spesifik vendor API.
     """
 
-    def ganerate_structured(
+    def generate_structured(
         self,
         prompt: str,
         response_schema: type[T_Schema],

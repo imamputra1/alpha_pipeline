@@ -11,51 +11,51 @@ from pydantic import BaseModel, Field
 
 class MADResponse(BaseModel):
     """
-    DoD untuk agen Market Asymmetry Detective.
-    Fokus utama: Siapa yang mensubsidi profit kita? (Counterparty analysis).
-    Jika kita tidak tahu siapa yang kalah, berarti kita yang kalah.
+    DoD untuk agen MAD yang berburu mangsa (Counterparty) dan inefisiensi.
     """
 
     status: Literal["Pass", "Fail"] = Field(
-        description="Harus 'Pass' jika ada inefisiensi pasar yang logis. 'Fail' jika asumsi terlalu naif atau tidak masuk akal."
+        description="Harus 'Pass' jika ada Limits to Arbitrage yang logis. 'Fail' jika ide halusinasi atau alpha sudah mati."
     )
     counterparty: str = Field(
-        description="Identifikasi spesifik partisipan pasar yang menjadi sumber edge kita (misal: 'Retail stop-loss hunters', 'Slow liquidity providers')."
+        description="Identifikasi pihak yang mensubsidi trade (Mangsa)."
+    )
+    inefficiency_classification: Literal[
+        "Structural/Rules",
+        "Behavioral/Psychological",
+        "Information Asymmetry/Latency",
+        "Unknown",
+    ] = Field(description="Kategorisasi jenis inefisiensi pasar.")
+    limits_to_arbitrage: str = Field(
+        description="Alasan mengapa institusi besar (e.g., Jump/RenTec) membiarkan alpha ini. (Capacity constraint, slippage, dll)."
     )
     economic_rationale: str = Field(
-        description="Penjelasan murni mekanisme mikrostruktur. DILARANG menggunakan alasan teknikal (seperti RSI overbought)."
+        description="Penjelasan mikrostruktur (Order book, flow, funding). HARAM analisis teknikal."
     )
     revision_notes: str | None = Field(
         default=None,
-        description="Jika status 'Fail', jelaskan alasan penolakannya di sini agar LLM bisa belajar di iterasi berikutnya.",
+        description="Jika status 'Fail', jelaskan alasan penolakan (misal: 'Tidak ada limits to arbitrage').",
     )
 
 
 class HEResponse(BaseModel):
     """
-    DoD untuk agen Hypothesis Engineer.
-    Fokus utama: Mengubah narasi ekonomi menjadi hipotesis yang BISA DIBANTAH (Falsifiable).
-    Semua harus berakar pada probabilitas statistik, bukan opini.
+    DoD untuk agen HE yang menerjemahkan ke hipotesis falsifiable.
     """
 
     status: Literal["Pass", "Fail"] = Field(
-        description="Harus 'Pass' jika hipotesis bisa diuji secara statistik. 'Fail' jika mengandung ambiguitas waktu atau kata bersayap."
+        description="'Pass' jika bisa diukur murni dengan data L2/Ticks/Funding. 'Fail' jika tidak."
     )
-    independent_variables: list[str] = Field(
-        description="Daftar metrik observasi/katalis (State A) yang memicu sinyal."
-    )
-    dependent_variable: str = Field(
-        description="Arah return, spread, atau pergerakan harga yang diekspektasikan (Y)."
-    )
+    independent_variables: list[str] = Field(description="Daftar prediktor/sinyal (X).")
+    dependent_variable: str = Field(description="Target return/arah (Y).")
     time_horizon: str = Field(
-        description="Batas waktu ekspektasi absolut. Harus presisi (misal: '100ms', '1-tick', '5-minutes', bukan 'soon' atau 'eventually')."
+        description="Batas waktu absolut (misal: '100ms', '5-ticks'). Dilarang menggunakan waktu relatif."
     )
-    null_hypothesis: str = Field(
-        description="H0: Kondisi di mana edge kita TIDAK ADA (misal: 'Spread tidak mean-reverting dalam 100ms')."
+    market_regime: str = Field(
+        description="Kondisi pasar spesifik tempat hipotesis ini valid (misal: 'Volatilitas top 10%')."
     )
-    alternative_hypothesis: str = Field(
-        description="H1: Kondisi di mana edge kita ADA dan tervalidasi."
-    )
+    null_hypothesis: str = Field(description="H0: Sinyal hanyalah noise acak.")
+    alternative_hypothesis: str = Field(description="H1: Arah edge sesuai narasi MAD.")
     revision_notes: str | None = Field(
         default=None, description="Catatan koreksi jika status 'Fail'."
     )
@@ -63,25 +63,30 @@ class HEResponse(BaseModel):
 
 class SAResponse(BaseModel):
     """
-    DoD untuk agen Signal Architect.
-    Fokus utama: Transformasi hipotesis menjadi formula matematis murni.
-    SANGAT KRITIKAL: Modul ini adalah garis pertahanan terakhir sebelum uang sungguhan terbakar.
+    DoD untuk agen SA. Lapisan pertahanan paling paranoid terhadap friksi pasar.
     """
 
     status: Literal["Pass", "Fail"] = Field(
-        description="Evaluasi final. 'Fail' jika model terindikasi memiliki look-ahead bias atau menggunakan harga absolut (non-stasioner)."
+        description="'Fail' jika ada Look-Ahead Bias, Non-Stationarity, atau mengabaikan biaya eksekusi."
     )
-    formula_latex: str = Field(
-        description="Formula Sinyal (S_t) dalam format LaTeX murni. Contoh: S_t = \\alpha (P_t - P_{t-1})."
+    raw_signal_formula_latex: str = Field(
+        description="Formula Sinyal Mentah (S_t) dalam LaTeX murni."
     )
-    variables_dict: dict[str, str] = Field(
-        description="Kamus pemetaan variabel LaTeX. Key: Simbol (misal: '\\pi_t'). Value: Definisi tegas."
+    expected_net_edge_formula_latex: str = Field(
+        description="Formula Expected Net Edge (\\tilde{\\phi}_t) yang mendiskontokan S_t dengan probabilitas gagal dan biaya eksekusi."
     )
+    execution_logic: str = Field(
+        description="Logika trigger kondisional (Kapan Beli/Jual/Batal)."
+    )
+    variables_dict: dict[str, str] = Field(description="Kamus pemetaan variabel LaTeX.")
     is_stationary: bool = Field(
-        description="LLM WAJIB mendeklarasikan apakah output fungsinya stasioner (misal: z-score, log-return). Jika False, strategi ini akan hancur."
+        description="Self-Audit: Apakah fungsi prediktor stasioner?"
+    )
+    considers_execution_costs: bool = Field(
+        description="Self-Audit: Apakah model memasukkan penalti slippage dan fee secara eksplisit?"
     )
     has_look_ahead_bias: bool = Field(
-        description="Self-Audit: Apakah fungsi menggunakan data masa depan (t+1)? Jika True, ini adalah DOSA BESAR dan harus di-routing ke kegagalan."
+        description="Self-Audit: Apakah ada kebocoran masa depan (t+1)? (Jika True, sistem akan langsung menolak)."
     )
     revision_notes: str | None = Field(
         default=None,

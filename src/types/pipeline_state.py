@@ -19,7 +19,7 @@ class PipelineState(TypedDict):
     """
 
     raw_input: str
-    economic_relationale: str | None
+    economic_rationale: str | None
     falsifiable_hypothesis: str | None
     signal_architecture: dict[str, str] | None
     error_logs: Annotated[list[str], operator.add]
