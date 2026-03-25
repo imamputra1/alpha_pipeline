@@ -223,7 +223,9 @@ def safe[**P, T](func: Callable[P, T]) -> Callable[P, Result[T, Exception]]:
     return wrapper
 
 
-def safe_async[**P, T](func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[Result[T, Exception]]]:
+def safe_async[**P, T](
+    func: Callable[P, Awaitable[T]],
+) -> Callable[P, Awaitable[Result[T, Exception]]]:
     """Wrap asynchronous function to return Result monad."""
 
     @functools.wraps(func)
@@ -582,4 +584,3 @@ __all__ = [
     "as_optional",
     "from_optional",
 ]
-
