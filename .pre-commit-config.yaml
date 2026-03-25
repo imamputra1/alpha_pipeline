@@ -1,0 +1,33 @@
+default_language_version:
+  python: python3
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: Ruff Format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        require_serial: true
+
+      - id: ruff-check
+        name: Ruff Linter
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        require_serial: true
+
+      - id: mypy
+        name: Mypy Static Type Checking
+        entry: uv run mypy src/
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: pytest
+        name: Run Unit Tests
+        entry: uv run pytest tests/unit/
+        language: system
+        types: [python]
+        pass_filenames: false

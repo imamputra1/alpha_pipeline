@@ -20,6 +20,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 # 0. HELPER FUNCTIONS (DEFENSIVE PROGRAMMING)
 # =============================================================================
 
+
 def safe_parse_dict(data: Any) -> Dict[str, Any]:
     """Helper untuk memastikan data selalu berupa dictionary dengan aman."""
     if isinstance(data, dict):
@@ -31,6 +32,7 @@ def safe_parse_dict(data: Any) -> Dict[str, Any]:
             logging.error("Gagal mem-parsing string JSON.")
             return {}
     return {}
+
 
 def render_mad_tab(data: Any) -> None:
     """Komponen UI khusus untuk merender hasil Market Asymmetry."""
@@ -49,6 +51,7 @@ def render_mad_tab(data: Any) -> None:
     st.subheader("Rasionalisasi Mikrostruktur")
     st.markdown(mad_data.get("rationale", "Tidak ada rasionalisasi."))
 
+
 def render_he_tab(data: Any) -> None:
     """Komponen UI khusus untuk merender hasil Hypothesis Engineer."""
     he_data = safe_parse_dict(data)
@@ -61,13 +64,14 @@ def render_he_tab(data: Any) -> None:
     col_b.metric("Horizon Absolut", he_data.get("time_horizon", "N/A"))
 
     st.markdown(f"**Market Regime:** `{he_data.get('market_regime', 'Agnostic')}`")
-    ind_vars = he_data.get('independent_vars', [])
+    ind_vars = he_data.get("independent_vars", [])
     if isinstance(ind_vars, list):
         st.markdown(f"**Variabel Sinyal (X):** `{', '.join(ind_vars)}`")
 
     st.subheader("Hipotesis Falsifiable")
     st.error(f"**H0 (Null):** {he_data.get('H0', 'N/A')}", icon="🛑")
     st.success(f"**H1 (Alternative):** {he_data.get('H1', 'N/A')}", icon="✅")
+
 
 def render_sa_tab(data: Any) -> None:
     """Komponen UI khusus untuk merender Arsitektur Sinyal (LaTeX & Tabel)."""
@@ -102,6 +106,7 @@ def render_sa_tab(data: Any) -> None:
         st.dataframe(df_vars, use_container_width=True, hide_index=True)
     else:
         st.write(var_dict)
+
 
 # =============================================================================
 # 1. PAGE CONFIGURATION & SESSION STATE MANAGEMENT
@@ -167,7 +172,9 @@ with st.sidebar:
 # =============================================================================
 
 st.title("Alpha Pipeline Orchestrator")
-st.markdown("*Otomatisasi Reverse-Engineering Inefisiensi Pasar Berbasis Mikrostruktur.*")
+st.markdown(
+    "*Otomatisasi Reverse-Engineering Inefisiensi Pasar Berbasis Mikrostruktur.*"
+)
 
 is_ready = bool(st.session_state.api_key and st.session_state.raw_input_text)
 
@@ -198,8 +205,8 @@ if st.button(
             for output in graph.stream(current_state):
                 for node_name, state_update in output.items():
                     # Update current_state dengan data terbaru dari node
-                    current_state.update(state_update) 
-                    
+                    current_state.update(state_update)
+
                     if node_name == "mad_agent":
                         st.write("✅ **MAD:** Asimetri pasar berhasil dipetakan.")
                     elif node_name == "he_agent":
@@ -247,7 +254,7 @@ if st.session_state.pipeline_result:
 
     with tab_mad:
         render_mad_tab(res.get("economic_rationale"))
-    
+
     with tab_he:
         render_he_tab(res.get("falsifiable_hypothesis"))
 
