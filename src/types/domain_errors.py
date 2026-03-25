@@ -6,6 +6,7 @@ the system fails predictably and explicitly.
 """
 
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -17,6 +18,7 @@ class DomainError(Exception):
     """
 
     message: str
+    state: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
