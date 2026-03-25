@@ -1,16 +1,16 @@
-# Alpha Pipeline
+# Hypothesis_Gen
 
 > An autonomous quantitative research orchestrator designed to reverse-engineer market inefficiencies using market microstructure principles.
 > 
 > *Note: This is an experimental research tool. It is designed for alpha discovery and hypothesis generation, not for direct live-execution trading.*
 
-Alpha Pipeline is a state-machine-driven agentic framework built for quantitative researchers. It automates the tedious process of transforming raw market observations, academic papers, or Exploratory Data Analysis (EDA) into mathematically rigorous, falsifiable trading signals. 
+Hypothesis_Gen is a state-machine-driven agentic framework built for quantitative researchers. It automates the tedious process of transforming raw market observations, academic papers, or Exploratory Data Analysis (EDA) into mathematically rigorous, falsifiable trading signals. 
 
 Built with a strict adherence to software engineering best practices, it prioritizes deterministic outputs, type safety, and memory stability over rapid, reckless LLM generation.
 
 ## Architectural Philosophy
 
-Unlike standard LLM wrappers, Alpha Pipeline is engineered using a strict **Functional-Core, Imperative-Shell** architecture.
+Unlike standard LLM wrappers, Hypothesis_Gen is engineered using a strict **Functional-Core, Imperative-Shell** architecture.
 
 * **Deterministic State Machines:** Orchestrated via `LangGraph`, the pipeline strictly enforces a multi-agent workflow (Market Asymmetry -> Hypothesis Engineering -> Signal Architecture).
 * **Fail-Safe Domain Logic:** Utilizing the `Result` monad (`Ok` / `Err`), business logic routing relies on pattern matching rather than unstructured `try/except` blocks. Domain errors (e.g., Look-Ahead Bias, Non-Stationarity) trigger graceful circuit breakers, preventing silent logic failures.
@@ -30,8 +30,8 @@ This project utilizes `uv` for lightning-fast, reproducible dependency managemen
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/YOUR_USERNAME/alpha_pipeline.git](https://github.com/YOUR_USERNAME/alpha_pipeline.git)
-cd alpha_pipeline
+git clone https://github.com/imamputra1/hypothesis_gen.git
+cd hypothesis_gen
 
 # 2. Sync dependencies and build the virtual environment
 uv sync --all-extras
@@ -43,7 +43,7 @@ echo 'GEMINI_API_KEY="your_api_key_here"' > .env
 
 ## Usage
 
-Alpha Pipeline hides complex LangGraph orchestration behind a clean Streamlit interface.
+Hypothesis_Gen hides complex LangGraph orchestration behind a clean Streamlit interface.
 
 To start the local research laboratory:
 
@@ -58,7 +58,7 @@ uv run streamlit run app.py
 
 ## Programmatic Access (Headless Mode)
 
-If you wish to bypass the UI and use Alpha Pipeline inside your own scripts or Jupyter Notebooks:
+If you wish to bypass the UI and use Hypothesis_Gen inside your own scripts or Jupyter Notebooks:
 
 ```python
 from src.infrastructure.gemini_gateway import GeminiGateway
@@ -115,4 +115,4 @@ This project is licensed under the GNU AGPLv3 License.
 
 This is a strong copyleft license. You are free to use, modify, and distribute this software. However, if you modify the code and provide it as a service over a network (e.g., hosting a modified version on a web server), you must publicly share your modified source code under the same AGPLv3 license.
 
-For more details, see the LICENSE file.
+For more details, see the `LICENSE` file.
