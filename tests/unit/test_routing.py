@@ -37,6 +37,7 @@ def get_dummy_state(retry_count: int = 0) -> PipelineState:
 # SKENARIO 1: UJI RUTE "HAPPY PATH" (LANJUT KE NODE BERIKUTNYA)
 # =============================================================================
 
+
 def test_route_mad_ok() -> None:
     """Jika MAD mengembalikan Ok(), rute harus mengarah ke HE."""
     state = get_dummy_state()
@@ -54,6 +55,7 @@ def test_route_sa_ok() -> None:
 # =============================================================================
 # SKENARIO 2: UJI RUTE "SAD PATH" (PUTAR BALIK UNTUK REVISI)
 # =============================================================================
+
 
 def test_route_sa_look_ahead_bias() -> None:
     """Jika SA mendeteksi LookAheadBias (dan retry < max), putar balik ke SA."""
@@ -75,10 +77,11 @@ def test_route_he_non_falsifiable() -> None:
 # SKENARIO 3: UJI RUTE "FATAL ERROR" (BATAL TOTAL)
 # =============================================================================
 
+
 def test_route_missing_data() -> None:
     """Jika ada MissingDataError di node mana pun, graf harus langsung dihentikan (__end__)."""
     error = MissingDataError("Data prasyarat hilang.")
-    
+
     assert route_mad(Err(error)) == NODE_END
     assert route_he(Err(error)) == NODE_END
     assert route_sa(Err(error)) == NODE_END
@@ -88,6 +91,7 @@ def test_route_missing_data() -> None:
 # SKENARIO 4: UJI CIRCUIT BREAKER (MENCEGAH INFINITE LOOP)
 # =============================================================================
 
+
 def test_route_max_retries() -> None:
     """
     Jika error terjadi tetapi retry_count sudah mencapai batas (misal: 3),
@@ -95,7 +99,7 @@ def test_route_max_retries() -> None:
     """
     state = get_dummy_state(retry_count=3)  # MAX_RETRIES tercapai
     error = LookAheadBiasError("Ngeyel pakai t+1", state=state)
-    
+
     result = route_sa(Err(error))
-    
+
     assert result == NODE_END, "Circuit Breaker gagal menghentikan infinite loop!"
